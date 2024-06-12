@@ -52,7 +52,22 @@ namespace Pikda.Win
 
         }
 
-        private void PictureEditor_Paint(object sender, PaintEventArgs e)
+        private void ModelsList_Click(object sender, EventArgs e)
+        {
+            //foreach (ModelButton model in this.ModelsList.Controls)
+            //    if(model.IsSelected)
+            //        SelectImageById(model.Id);
+
+            Console.WriteLine("ModelsList Clicked");
+        }
+
+        private void SelectImageById(Guid id)
+        {
+            //foreach (PictureEditor picture in this.ImagesPanel.Controls)
+            //    picture.
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
         {
             var totalWidth = this.Width;
 
@@ -67,21 +82,6 @@ namespace Pikda.Win
             this.ModelsList.Width = this.ModelData.Width = partsWidth;
 
             this.ResumeLayout(true);
-        }
-
-        private void ModelsList_Click(object sender, EventArgs e)
-        {
-            //foreach (ModelButton model in this.ModelsList.Controls)
-            //    if(model.IsSelected)
-            //        SelectImageById(model.Id);
-
-            Console.WriteLine("ModelsList Clicked");
-        }
-
-        private void SelectImageById(Guid id)
-        {
-            //foreach (PictureEditor picture in this.ImagesPanel.Controls)
-            //    picture.
         }
     }
 }
