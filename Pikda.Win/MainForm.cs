@@ -1,5 +1,6 @@
 ﻿using DevExpress.Data.Helpers;
 using DevExpress.XtraEditors;
+using DevExpress.XtraPrinting.Native;
 using Pikda.Win.Forms;
 using Pikda.Win.User_Control;
 using System;
@@ -83,5 +84,6 @@ namespace Pikda.Win
 
             this.ResumeLayout(true);
         }
+
     }
 }

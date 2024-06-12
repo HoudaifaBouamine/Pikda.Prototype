@@ -1,9 +1,12 @@
-﻿using System;
+﻿using DevExpress.XtraEditors;
+using DevExpress.XtraPrinting.Native;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -49,5 +52,66 @@ namespace Pikda.Win.User_Control
         public bool IsSelected { get; private set; }
         private Panel PicturePanel { get; set; }
 
+        private List<Rectangle> Rectangles = new List<Rectangle>();
+        private Rectangle CurrentRect;
+
+        private Point StartPoint;
+        private Point EndPoint;
+
+        private void PictureEdit_MouseDown(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("mouse down picture edit");
+            StartPoint = e.Location;
+            CurrentRect = new Rectangle(e.Location, new Size(0, 0));
+        }
+
+        private void PictureEdit_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            EndPoint = e.Location;
+
+            // Update the current rectangle
+            CurrentRect = new Rectangle
+                (
+                    Math.Min(StartPoint.X , EndPoint.X),
+                    Math.Min(StartPoint.Y , EndPoint.Y),
+                    Math.Abs(StartPoint.X - EndPoint.X),
+                    Math.Abs(StartPoint.Y - EndPoint.Y)
+                );
+
+            // Invalidate the form to trigger the paint event
+            Console.WriteLine("mouse move , picture edit");
+            PictureEdit.Invalidate();
+        }
+
+        private void PictureEdit_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (CurrentRect.Width * CurrentRect.Height == 0)
+                return;
+
+            // Add the current rectangle to the list
+            Rectangles.Add(CurrentRect);
+        }
+
+        private void PictureEdit_Paint(object sender, PaintEventArgs e)
+        {
+            // Create a Graphics object and a Pen object
+            Graphics g = e.Graphics;
+            Pen pen = new Pen(Color.Black);
+
+            // Draw all previous rectangles
+            foreach (Rectangle rect in Rectangles)
+            {
+                g.DrawRectangle(pen, rect);
+            }
+
+            // Draw the current rectangle
+            g.DrawRectangle(pen, CurrentRect);
+
+            // Dispose the objects
+            pen.Dispose();
+        }
     }
 }

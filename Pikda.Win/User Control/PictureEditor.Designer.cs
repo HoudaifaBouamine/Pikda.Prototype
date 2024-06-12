@@ -43,13 +43,17 @@
             this.PictureEdit.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Zoom;
             this.PictureEdit.Size = new System.Drawing.Size(662, 359);
             this.PictureEdit.TabIndex = 0;
+            this.PictureEdit.Paint += new System.Windows.Forms.PaintEventHandler(this.PictureEdit_Paint);
+            this.PictureEdit.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureEdit_MouseDown);
+            this.PictureEdit.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureEdit_MouseMove);
+            this.PictureEdit.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PictureEdit_MouseUp);
             // 
-            // PictureEditControler
+            // PictureEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.PictureEdit);
-            this.Name = "PictureEditControler";
+            this.Name = "PictureEditor";
             this.Size = new System.Drawing.Size(662, 359);
             ((System.ComponentModel.ISupportInitialize)(this.PictureEdit.Properties)).EndInit();
             this.ResumeLayout(false);
