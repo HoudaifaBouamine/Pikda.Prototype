@@ -13,7 +13,7 @@ namespace Pikda.Win.User_Control
 {
     public partial class ModelButton : UserControl
     {
-        public ModelButton(PanelControl modelsList,PictureEditor pictureEditor,Guid id,string modelName)
+        public ModelButton(PanelControl modelsList,PictureEditor pictureEditor,int id,string modelName)
         {
             InitializeComponent();
             this.Id = id;
@@ -50,7 +50,7 @@ namespace Pikda.Win.User_Control
         private PanelControl ModelsList { get; set; }
         private PictureEditor PictureEditor { get; set; }
 
-        public Guid Id { get; private set; }
+        public int Id { get; private set; }
 
 
         /// <summary>

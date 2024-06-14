@@ -1,4 +1,5 @@
 ﻿using DevExpress.XtraEditors;
+using Pikda.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +24,7 @@ namespace Pikda.Win.Forms
         {
             IsCreationConfirmed = true;
             this.ModelName = this.ModelNameTextBox.Text;
+
             this.Close();
         }
 

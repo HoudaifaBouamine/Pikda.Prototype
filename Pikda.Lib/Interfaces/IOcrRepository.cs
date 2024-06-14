@@ -1,5 +1,6 @@
 ﻿using Pikda.Domain.Entites;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Pikda.Domain.Interfaces
@@ -11,7 +12,9 @@ namespace Pikda.Domain.Interfaces
         /// </summary>
         /// <param name="ocrModel">Entity to be store</param>
         /// <returns>If success, the created entity Id (auto increment int) otherwise return NULL</returns>
-        Task<int?> AddOrcModel(OcrModel ocrModel);
+        Task<OcrModel> AddOrcModelAsync(string name);
+
+        Task<List<OcrModel>> GetAllOrcModelsAsync();
 
     }
 }

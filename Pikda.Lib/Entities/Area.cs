@@ -1,11 +1,13 @@
-﻿using System;
+﻿using DevExpress.Xpo;
+using System;
 using System.Drawing;
 
 namespace Pikda.Domain.Entites
 {
 
-    public class Area
+    public class Area : XPLiteObject
     {
+        [Key(autoGenerate: true)]
         public int Id { get; private set; }
         public string Name { get; private set; }
         public float XFactor { get; private set; }
@@ -13,18 +15,18 @@ namespace Pikda.Domain.Entites
         public float WidthFactor { get; private set; }
         public float HeightFactor { get; private set; }
 
-        public Area Create(string name, Rectangle imageRect, Rectangle insiderRectangle) =>
-            new Area
+        public static Area Create(Session session,string name, Rectangle imageRect, Rectangle newRect) =>
+            new Area(session)
             {
                 Name = name,
-                XFactor = ((float) Math.Min(insiderRectangle.X , insiderRectangle.X + insiderRectangle.Width))  / (imageRect.Width),
-                YFactor = ((float) Math.Min(insiderRectangle.Y , insiderRectangle.Y + insiderRectangle.Height)) / (imageRect.Height),
-                WidthFactor  = (float) Math.Abs(insiderRectangle.Width)  / (imageRect.Width),
-                HeightFactor = (float) Math.Abs(insiderRectangle.Height) / (imageRect.Height)
+                XFactor = ((float) Math.Min(newRect.X , newRect.X + newRect.Width))  / (imageRect.Width),
+                YFactor = ((float) Math.Min(newRect.Y , newRect.Y + newRect.Height)) / (imageRect.Height),
+                WidthFactor  = (float) Math.Abs(newRect.Width)  / (imageRect.Width),
+                HeightFactor = (float) Math.Abs(newRect.Height) / (imageRect.Height)
             };
-        
 
-        protected Area() { }
+
+        protected Area(Session session) : base(session) { }
 
         public bool SetName(string name)
         {

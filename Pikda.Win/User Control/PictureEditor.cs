@@ -16,7 +16,7 @@ namespace Pikda.Win.User_Control
 {
     public partial class PictureEditor : UserControl
     {
-        public PictureEditor(Panel picturePanel,Guid id)
+        public PictureEditor(Panel picturePanel,int id)
         {
             InitializeComponent();
             this.Dock = DockStyle.Fill;
@@ -45,7 +45,7 @@ namespace Pikda.Win.User_Control
             this.IsSelected = false;
         }
 
-        public Guid Id { get; private set; }
+        public int Id { get; private set; }
 
         /// <summary>
         /// Use MarkAsSelected() or MarkAsUnSelected() to update this value

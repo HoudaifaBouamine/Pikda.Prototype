@@ -1,25 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DevExpress.Xpo.DB;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pikda.Domain.Interfaces;
 using Pikda.Infrastructure;
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Pikda.Win
 {
-    //internal static class Program
-    //{
-    //    /// <summary>
-    //    /// The main entry point for the application.
-    //    /// </summary>
-    //    [STAThread]
-    //    static void Main()
-    //    {
-    //        Application.EnableVisualStyles();
-    //        Application.SetCompatibleTextRenderingDefault(false);
-    //        Application.Run(new MainForm());
-    //    }
-    
     internal static class Program
     {
         [STAThread]
@@ -40,7 +29,7 @@ namespace Pikda.Win
         {
             return Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) => {
-                    services.AddTransient<IOcrRepository , OrcRepository>();
+                    services.AddTransient<IOcrRepository , OcrRepository>();
                     services.AddTransient<MainForm>();
                 });
         }
