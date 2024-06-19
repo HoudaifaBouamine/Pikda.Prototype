@@ -5,10 +5,6 @@ VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pikda.Win", "Pikda.Win\Pikda.Win.csproj", "{226A985C-E79B-4038-B501-2993A3DB4DC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pikda.Domain", "Pikda.Lib\Pikda.Domain.csproj", "{88BE5C0A-C1A4-4C82-8CD5-D9964C64862A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pikda.Infrastructure", "Pikda.Infrastructure\Pikda.Infrastructure.csproj", "{CAFED79E-80BE-42C1-ABAF-75757E60615C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,14 +15,6 @@ Global
 		{226A985C-E79B-4038-B501-2993A3DB4DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{226A985C-E79B-4038-B501-2993A3DB4DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{226A985C-E79B-4038-B501-2993A3DB4DC6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{88BE5C0A-C1A4-4C82-8CD5-D9964C64862A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88BE5C0A-C1A4-4C82-8CD5-D9964C64862A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88BE5C0A-C1A4-4C82-8CD5-D9964C64862A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88BE5C0A-C1A4-4C82-8CD5-D9964C64862A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CAFED79E-80BE-42C1-ABAF-75757E60615C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CAFED79E-80BE-42C1-ABAF-75757E60615C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CAFED79E-80BE-42C1-ABAF-75757E60615C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CAFED79E-80BE-42C1-ABAF-75757E60615C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

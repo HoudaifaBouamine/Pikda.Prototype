@@ -80,6 +80,7 @@
             this.MinimumSize = new System.Drawing.Size(900, 450);
             this.Name = "MainForm";
             this.Text = "Pikda";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.ModelData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ModelsList)).EndInit();

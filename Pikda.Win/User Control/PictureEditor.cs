@@ -1,6 +1,8 @@
 ﻿using DevExpress.XtraBars.MVVM.Services;
 using DevExpress.XtraEditors;
 using DevExpress.XtraPrinting.Native;
+using Pikda.Domain.Entites;
+using Pikda.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,13 +18,20 @@ namespace Pikda.Win.User_Control
 {
     public partial class PictureEditor : UserControl
     {
-        public PictureEditor(Panel picturePanel,int id)
+        public PictureEditor(IOcrRepository ocrRepository, Panel picturePanel, OcrModel model)
         {
             InitializeComponent();
             this.Dock = DockStyle.Fill;
-            this.Id = id;
+            this.Id = model.Id;
             this.PicturePanel = picturePanel;
             this.MarkAsSelected();
+
+            Rectangles = model.Areas
+                .Select(a => (a.ToRectangle(ImageBorder), model.Name))
+                .ToList();
+
+            this._ocrRepository = ocrRepository;
+            _ocrMode = model;
         }
 
         private void UnSelectAllAndSelectThis()
@@ -45,21 +54,6 @@ namespace Pikda.Win.User_Control
             this.IsSelected = false;
         }
 
-        public int Id { get; private set; }
-
-        /// <summary>
-        /// Use MarkAsSelected() or MarkAsUnSelected() to update this value
-        /// </summary>
-        public bool IsSelected { get; private set; }
-        private Panel PicturePanel { get; set; }
-
-        private List<Rectangle> Rectangles = new List<Rectangle>();
-        private Rectangle CurrentRect;
-        private Rectangle ImageBorder;
-
-        private static readonly Point UnDefinedPoint = new Point(-404, -404);
-        private Point StartPoint = UnDefinedPoint;
-        private Point EndPoint;
 
         
 
@@ -100,7 +94,7 @@ namespace Pikda.Win.User_Control
             PictureEdit.Invalidate();
         }
 
-        private void PictureEdit_MouseUp(object sender, MouseEventArgs e)
+        private async void PictureEdit_MouseUp(object sender, MouseEventArgs e)
         {
 
             if (StartPoint == UnDefinedPoint) return;
@@ -113,7 +107,10 @@ namespace Pikda.Win.User_Control
 
             // Add the current rectangle to the list
             CurrentRect.Intersect(ImageBorder);
-            Rectangles.Add(CurrentRect);
+            Rectangles.Add((CurrentRect, UnDefinedName));
+            _ocrMode.Areas.Add(Area.Create(Name, ImageBorder ,CurrentRect));
+            Console.WriteLine(" --> ocr mode deposed ? : " + _ocrMode.Id+ " " + _ocrMode.Name);
+            await _ocrRepository.UpdateOrcModelAsync(_ocrMode);
 
             StartPoint = UnDefinedPoint;
         }
@@ -127,9 +124,9 @@ namespace Pikda.Win.User_Control
             Pen pen = new Pen(Color.Black);
 
             // Draw all previous rectangles
-            foreach (Rectangle rect in Rectangles)
+            foreach (var rect in Rectangles)
             {
-                g.DrawRectangle(pen, rect);
+                g.DrawRectangle(pen, rect.Item1);
             }
 
             // Draw the current rectangle
@@ -164,5 +161,43 @@ namespace Pikda.Win.User_Control
 
 
         }
+
+  
+
+        private readonly IOcrRepository _ocrRepository;
+        private OcrModel _ocrMode;
+        public int Id { get; private set; }
+
+        /// <summary>
+        /// Use MarkAsSelected() or MarkAsUnSelected() to update this value
+        /// </summary>
+        public bool IsSelected { get; private set; }
+        private Panel PicturePanel { get; set; }
+        public Image Image
+        {
+            get
+            {
+                return PictureEdit.Image;
+            }
+            private set
+            {
+                PictureEdit.Image = value;
+            }
+        }
+        private async void PictureEdit_LoadCompleted(object sender, EventArgs e)
+        {
+            _ocrMode.Image = this.Image;
+            await _ocrRepository.UpdateOrcModelAsync(_ocrMode);
+        }
+
+        private List<(Rectangle, string)> Rectangles = new List<(Rectangle, string)>();
+        private Rectangle CurrentRect;
+        private Rectangle ImageBorder;
+
+        private static readonly Point UnDefinedPoint = new Point(-404, -404);
+        private static readonly string UnDefinedName = "Not Named";
+        private Point StartPoint = UnDefinedPoint;
+        private Point EndPoint;
+
     }
 }

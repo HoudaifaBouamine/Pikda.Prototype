@@ -1,13 +1,15 @@
-﻿using DevExpress.Xpo.DB;
-using DevExpress.Xpo;
+﻿using DevExpress.Xpo;
 using Pikda.Domain.Entites;
 using Pikda.Domain.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
+using DevExpress.Xpo.DB;
+using System.Drawing;
+using System.Xml.Linq;
+using System.ComponentModel;
 
 namespace Pikda.Infrastructure
 {
@@ -18,10 +20,11 @@ namespace Pikda.Infrastructure
         {
 
             if (XpoDefault.DataLayer != null) return;
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appDataPath = Path.Combine( Environment.CurrentDirectory, "..\\..");
+            appDataPath = Path.GetFullPath(appDataPath);
             string connectionString = SQLiteConnectionProvider.GetConnectionString(Path.Combine(appDataPath, "OrcModels.db"));
             XpoDefault.DataLayer = XpoDefault.GetDataLayer(connectionString, AutoCreateOption.DatabaseAndSchema);
-            
+            Console.WriteLine($"\n\n --> Connection String {connectionString}\n\n");
         }
 
         public Task<int?> AddOrcModel(OcrModel ocrModel)
@@ -67,7 +70,9 @@ namespace Pikda.Infrastructure
                         session: uow,
                         name: name
                     );
-                
+
+
+                await uow.SaveAsync(newOcrModel);
                 await uow.CommitChangesAsync();
 
                 Console.WriteLine("Id of new orc is " + newOcrModel.Id + " (if it is 0, creation is faild)");
@@ -79,17 +84,71 @@ namespace Pikda.Infrastructure
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
-                var query = await uow.Query<OcrModel>()
-                    .Select(ocr => $"[{ocr.Id}] {ocr.Name}")
-                    .ToListAsync();
+                var query = await uow.Query<OcrModel>().ToListAsync();
 
-                foreach (var line in query)
-                {
-                    Console.WriteLine(line);
-                }
-
-                return new List<OcrModel>();
+                return new List<OcrModel>(query);
             }
         }
+
+        public async Task<OcrModel> ChangeImageAsync(int modelId, Image image)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
+                model.Image = image;
+                await uow.SaveAsync(model);
+                await uow.CommitChangesAsync();
+
+                Console.WriteLine(" -> Image updated");
+
+                return model;
+            }
+        }
+
+        public async Task<OcrModel> ChangeNameAsync(int modelId, string name)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
+                model.Name = name;
+                await uow.SaveAsync(model);
+                await uow.CommitChangesAsync();
+
+                Console.WriteLine(" -> Name updated");
+
+                return model;
+            }
+        }
+
+        public async Task<OcrModel> AddAreaAsync(int modelId, Area area)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
+                model.Areas.Add(area);
+                await uow.SaveAsync(model);
+                await uow.CommitChangesAsync();
+
+                Console.WriteLine(" -> Name updated");
+
+                return model;
+            }
+        }
+
+        public async Task<OcrModel> DeleteAreaAsync(int modelId, int areaId)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
+                model.Areas = new BindingList<Area> (model.Areas.Where(a=>a.Id != areaId).ToList());
+                await uow.SaveAsync(model);
+                await uow.CommitChangesAsync();
+
+                Console.WriteLine(" -> Area Deleted updated");
+
+                return model;
+            }
+        }
+
     }
 }

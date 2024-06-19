@@ -13,6 +13,8 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Pikda.Win
@@ -42,7 +44,7 @@ namespace Pikda.Win
             {
                 var modelName = modelCreationDialgo.ModelName;
 
-                var newOcrModel = await _ocrRepository.AddOrcModelAsync(Name);
+                var newOcrModel = await _ocrRepository.AddOrcModelAsync(modelName);
 
                 if(newOcrModel.Id == 0)
                 {
@@ -50,7 +52,7 @@ namespace Pikda.Win
                     return;
                 }
 
-                var pictureEditor = new PictureEditor(this.ImagesPanel, newOcrModel.Id);
+                var pictureEditor = new PictureEditor(_ocrRepository,this.ImagesPanel, newOcrModel);
                 this.ImagesPanel.Controls.Add(pictureEditor);
                 this.ModelsList.Controls.Add(new ModelButton(this.ModelsList, pictureEditor, newOcrModel.Id, modelName));
 
@@ -63,8 +65,7 @@ namespace Pikda.Win
                         modelPictureEditor.Visible = false;
             }
 
-            await _ocrRepository.GetAllOrcModelsAsync();
-            
+            Console.WriteLine("Added Successfuly");
         }
 
         private void ModelsList_Click(object sender, EventArgs e)
@@ -99,5 +100,16 @@ namespace Pikda.Win
             this.ResumeLayout(true);
         }
 
+        private async void MainForm_Load(object sender, EventArgs e)
+        {
+            var models = await _ocrRepository.GetAllOrcModelsAsync();
+
+            foreach (var model in models)
+            {
+                var pictureEditor = new PictureEditor(_ocrRepository,this.ImagesPanel, model);
+                this.ImagesPanel.Controls.Add(pictureEditor);
+                this.ModelsList.Controls.Add(new ModelButton(this.ModelsList, pictureEditor, model.Id, model.Name));
+            }
+        }
     }
 }
