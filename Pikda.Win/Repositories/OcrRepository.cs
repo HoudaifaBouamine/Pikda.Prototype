@@ -82,6 +82,7 @@ namespace Pikda.Infrastructure
 
         public async Task<List<OcrModel>> GetAllOrcModelsAsync()
         {
+            return new List<OcrModel>();
             using (UnitOfWork uow = new UnitOfWork())
             {
                 var query = await uow.Query<OcrModel>().ToListAsync();
