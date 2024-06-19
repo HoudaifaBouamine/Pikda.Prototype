@@ -9,11 +9,19 @@ namespace Pikda.Domain.Entites
     {
         [Key(autoGenerate: true), Persistent]
         public int Id { get; private set; }
+        [Persistent]
         public string Name { get; private set; }
+        [Persistent]
         public float XFactor { get; private set; }
+        [Persistent]
         public float YFactor { get; private set; }
+        [Persistent]
         public float WidthFactor { get; private set; }
+        [Persistent] 
         public float HeightFactor { get; private set; }
+
+        [Association]
+        public OcrModel OcrModel { get; set; }
 
         public static Area Create(string name, Rectangle imageRect, Rectangle newRect) =>
             new Area
@@ -48,4 +56,5 @@ namespace Pikda.Domain.Entites
             return true;
         }
     }
+
 }

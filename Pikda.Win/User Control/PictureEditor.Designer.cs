@@ -43,7 +43,8 @@
             this.PictureEdit.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Zoom;
             this.PictureEdit.Size = new System.Drawing.Size(662, 359);
             this.PictureEdit.TabIndex = 0;
-            this.PictureEdit.LoadCompleted += new System.EventHandler(this.PictureEdit_LoadCompleted);
+            this.PictureEdit.ImageChanged += new System.EventHandler(this.PictureEdit_ImageChanged);
+            this.PictureEdit.ImageLoading += new DevExpress.XtraEditors.Repository.ImageLoadEventHandler(this.PictureEdit_ImageLoading);
             this.PictureEdit.Paint += new System.Windows.Forms.PaintEventHandler(this.PictureEdit_Paint);
             this.PictureEdit.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureEdit_MouseDown);
             this.PictureEdit.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureEdit_MouseMove);

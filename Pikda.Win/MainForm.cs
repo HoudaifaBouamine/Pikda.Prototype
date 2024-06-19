@@ -106,6 +106,9 @@ namespace Pikda.Win
 
             foreach (var model in models)
             {
+                
+                Console.WriteLine($"\n--> model Image : {model.Image}, {model.Image?.Height} X {model.Image?.Width}");
+
                 var pictureEditor = new PictureEditor(_ocrRepository,this.ImagesPanel, model);
                 this.ImagesPanel.Controls.Add(pictureEditor);
                 this.ModelsList.Controls.Add(new ModelButton(this.ModelsList, pictureEditor, model.Id, model.Name));

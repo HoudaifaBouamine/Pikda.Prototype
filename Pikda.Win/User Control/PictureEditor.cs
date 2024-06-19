@@ -26,12 +26,18 @@ namespace Pikda.Win.User_Control
             this.PicturePanel = picturePanel;
             this.MarkAsSelected();
 
-            Rectangles = model.Areas
-                .Select(a => (a.ToRectangle(ImageBorder), model.Name))
-                .ToList();
+            //Rectangles = model.Areas
+            //    .Select(a => (a.ToRectangle(ImageBorder), a.Name))
+            //    .ToList();
+
+            foreach(var area in model.Areas)
+            {
+                Rectangles.Add((area.ToRectangle(ImageBorder), area.Name));
+            }
 
             this._ocrRepository = ocrRepository;
             _ocrMode = model;
+            Image = model.Image;
         }
 
         private void UnSelectAllAndSelectThis()
@@ -108,10 +114,10 @@ namespace Pikda.Win.User_Control
             // Add the current rectangle to the list
             CurrentRect.Intersect(ImageBorder);
             Rectangles.Add((CurrentRect, UnDefinedName));
-            _ocrMode.Areas.Add(Area.Create(Name, ImageBorder ,CurrentRect));
+            
             Console.WriteLine(" --> ocr mode deposed ? : " + _ocrMode.Id+ " " + _ocrMode.Name);
-            await _ocrRepository.UpdateOrcModelAsync(_ocrMode);
-
+            _ocrMode = await _ocrRepository.AddAreaAsync(Id, Area.Create(Name, ImageBorder, CurrentRect));
+            Console.WriteLine($"after adding area : {_ocrMode}");
             StartPoint = UnDefinedPoint;
         }
 
@@ -184,11 +190,6 @@ namespace Pikda.Win.User_Control
                 PictureEdit.Image = value;
             }
         }
-        private async void PictureEdit_LoadCompleted(object sender, EventArgs e)
-        {
-            _ocrMode.Image = this.Image;
-            await _ocrRepository.UpdateOrcModelAsync(_ocrMode);
-        }
 
         private List<(Rectangle, string)> Rectangles = new List<(Rectangle, string)>();
         private Rectangle CurrentRect;
@@ -199,5 +200,16 @@ namespace Pikda.Win.User_Control
         private Point StartPoint = UnDefinedPoint;
         private Point EndPoint;
 
+        private void PictureEdit_ImageLoading(object sender, DevExpress.XtraEditors.Repository.SaveLoadImageEventArgs e)
+        {
+            Console.WriteLine("\n\n---> Image from event : " + e.Image);
+            Console.WriteLine("\n\n---> Image from editor : " + Image);
+        }
+
+        private async void PictureEdit_ImageChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine($"\n\n\n\n -----------> Image = {Image}");
+            await _ocrRepository.ChangeImageAsync(Id, Image);
+        }
     }
 }
