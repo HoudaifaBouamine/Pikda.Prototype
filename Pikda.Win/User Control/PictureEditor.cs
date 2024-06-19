@@ -1,6 +1,7 @@
 ﻿using DevExpress.XtraBars.MVVM.Services;
 using DevExpress.XtraEditors;
 using DevExpress.XtraPrinting.Native;
+using Pikda.Domain.DTOs;
 using Pikda.Domain.Entites;
 using Pikda.Domain.Interfaces;
 using System;
@@ -18,7 +19,7 @@ namespace Pikda.Win.User_Control
 {
     public partial class PictureEditor : UserControl
     {
-        public PictureEditor(IOcrRepository ocrRepository, Panel picturePanel, OcrModel model)
+        public PictureEditor(IOcrRepository ocrRepository, Panel picturePanel, OcrModelDto model)
         {
             InitializeComponent();
             this.Dock = DockStyle.Fill;
@@ -26,18 +27,32 @@ namespace Pikda.Win.User_Control
             this.PicturePanel = picturePanel;
             this.MarkAsSelected();
 
+            if (model.Image != null)
+            {
+                Image = model.Image;
+                ImageBorder = CalcImageBorder();
+    
+                Console.WriteLine(" --> Count of areas : " + model.Areas.Count);
+
+                foreach (var area in model.Areas)
+                {
+                    Rectangles.Add((area.ToRectangle(ImageBorder), area.Name));
+                }
+
+                Console.WriteLine(" --> Count of reactangles : " + Rectangles.Count);
+
+                foreach (var rect in Rectangles)
+                {
+                    Console.WriteLine($"Rect {rect.Item2} : X:{rect.Item1.X}, Y:{rect.Item1.Y}, W:{rect.Item1.Width}, H:{rect.Item1.Height}");
+                }
+            }
             //Rectangles = model.Areas
             //    .Select(a => (a.ToRectangle(ImageBorder), a.Name))
             //    .ToList();
 
-            foreach(var area in model.Areas)
-            {
-                Rectangles.Add((area.ToRectangle(ImageBorder), area.Name));
-            }
 
             this._ocrRepository = ocrRepository;
             _ocrMode = model;
-            Image = model.Image;
         }
 
         private void UnSelectAllAndSelectThis()
@@ -116,7 +131,7 @@ namespace Pikda.Win.User_Control
             Rectangles.Add((CurrentRect, UnDefinedName));
             
             Console.WriteLine(" --> ocr mode deposed ? : " + _ocrMode.Id+ " " + _ocrMode.Name);
-            _ocrMode = await _ocrRepository.AddAreaAsync(Id, Area.Create(Name, ImageBorder, CurrentRect));
+            _ocrMode = await _ocrRepository.AddAreaAsync(Id, AreaDto.Create(UnDefinedName, ImageBorder, CurrentRect));
             Console.WriteLine($"after adding area : {_ocrMode}");
             StartPoint = UnDefinedPoint;
         }
@@ -141,18 +156,7 @@ namespace Pikda.Win.User_Control
             Console.WriteLine("Picture Edit : " + PictureEdit.Size);
             Console.WriteLine("Image        : " + PictureEdit.Image.Size);
 
-            var wFactor = (double) PictureEdit.Width / PictureEdit.Image.Width;
-            var hFactor = (double) PictureEdit.Height / PictureEdit.Image.Height;
-
-            var (minFactor, isWidthMinFactor) = (wFactor < hFactor ? wFactor : hFactor, (wFactor < hFactor)) ;
-
-            ImageBorder = new Rectangle
-                (
-                    x       : isWidthMinFactor ? 0 : (PictureEdit.Width - (int) (PictureEdit.Image.Width * minFactor)) / 2,
-                    y       : isWidthMinFactor? (PictureEdit.Height - (int) (PictureEdit.Image.Height * minFactor)) /2 : 0,
-                    width   : (int) (PictureEdit.Image.Width * minFactor),
-                    height  : (int) (PictureEdit.Image.Height * minFactor)
-                );
+            ImageBorder = CalcImageBorder();
 
             Console.WriteLine($"Image Border: {ImageBorder}");
             Console.WriteLine($"Current Rectangle: {CurrentRect}");
@@ -168,10 +172,26 @@ namespace Pikda.Win.User_Control
 
         }
 
+        Rectangle CalcImageBorder()
+        {
+
+            var wFactor = (double)PictureEdit.Width / PictureEdit.Image.Width;
+            var hFactor = (double)PictureEdit.Height / PictureEdit.Image.Height;
+
+            var (minFactor, isWidthMinFactor) = (wFactor < hFactor ? wFactor : hFactor, (wFactor < hFactor));
+
+            return new Rectangle
+                (
+                    x: isWidthMinFactor ? 0 : (PictureEdit.Width - (int)(PictureEdit.Image.Width * minFactor)) / 2,
+                    y: isWidthMinFactor ? (PictureEdit.Height - (int)(PictureEdit.Image.Height * minFactor)) / 2 : 0,
+                    width: (int)(PictureEdit.Image.Width * minFactor),
+                    height: (int)(PictureEdit.Image.Height * minFactor)
+                );
+        }
   
 
         private readonly IOcrRepository _ocrRepository;
-        private OcrModel _ocrMode;
+        private OcrModelDto _ocrMode;
         public int Id { get; private set; }
 
         /// <summary>
@@ -209,7 +229,9 @@ namespace Pikda.Win.User_Control
         private async void PictureEdit_ImageChanged(object sender, EventArgs e)
         {
             Console.WriteLine($"\n\n\n\n -----------> Image = {Image}");
+            if (_ocrRepository is null) return;
             await _ocrRepository.ChangeImageAsync(Id, Image);
+
         }
     }
 }

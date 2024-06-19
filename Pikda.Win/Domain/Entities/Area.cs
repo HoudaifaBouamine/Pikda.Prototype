@@ -1,4 +1,5 @@
 ﻿using DevExpress.Xpo;
+using Pikda.Domain.DTOs;
 using System;
 using System.Drawing;
 
@@ -23,28 +24,17 @@ namespace Pikda.Domain.Entites
         [Association]
         public OcrModel OcrModel { get; set; }
 
-        public static Area Create(string name, Rectangle imageRect, Rectangle newRect) =>
-            new Area
+        public static Area Create(Session session, AreaDto areaDto) =>
+            new Area(session)
             {
-                Id = default,
-                Name = name,
-                XFactor = ((float) Math.Min(newRect.X , newRect.X + newRect.Width))  / (imageRect.Width),
-                YFactor = ((float) Math.Min(newRect.Y , newRect.Y + newRect.Height)) / (imageRect.Height),
-                WidthFactor  = (float) Math.Abs(newRect.Width)  / (imageRect.Width),
-                HeightFactor = (float) Math.Abs(newRect.Height) / (imageRect.Height)
+                Name = areaDto.Name,
+                XFactor = areaDto.XFactor,
+                YFactor = areaDto.YFactor,
+                WidthFactor = areaDto.WidthFactor,
+                HeightFactor = areaDto.HeightFactor,
             };
 
-        public Rectangle ToRectangle(Rectangle currentImageRect)
-        {
-            return new Rectangle
-                (
-                    x: (int)(XFactor * currentImageRect.Width),
-                    y: (int)(YFactor * currentImageRect.Height),
-                    width: (int)(WidthFactor * currentImageRect.Width),
-                    height: (int)(HeightFactor * currentImageRect.Height)
-                );
-        }
-        protected Area() { }
+        protected Area(Session session) : base(session) { }
 
         public bool SetName(string name)
         {

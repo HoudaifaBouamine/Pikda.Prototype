@@ -1,13 +1,14 @@
 ﻿using DevExpress.Xpo;
 using Pikda.Domain.Entites;
 using Pikda.Domain.Interfaces;
+using Pikda.Domain.DTOs;
 using System;
-using System.IO;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
-using DevExpress.Xpo.DB;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using DevExpress.Xpo.DB;
 
 namespace Pikda.Infrastructure
 {
@@ -23,7 +24,28 @@ namespace Pikda.Infrastructure
             Console.WriteLine($"\n\n --> Connection String {connectionString}\n\n");
         }
 
-        public async Task<OcrModel> AddOrcModelAsync(string name)
+        private OcrModelDto ToDto(OcrModel model)
+        {
+            if (model == null) return null;
+
+            return new OcrModelDto
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Image = model.Image,
+                Areas = model.Areas.Select(a => new AreaDto
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    XFactor = a.XFactor,
+                    YFactor = a.YFactor,
+                    WidthFactor = a.WidthFactor,
+                    HeightFactor = a.HeightFactor
+                }).ToList()
+            };
+        }
+
+        public async Task<OcrModelDto> AddOrcModelAsync(string name)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
@@ -31,80 +53,85 @@ namespace Pikda.Infrastructure
                 await uow.SaveAsync(newOcrModel);
                 await uow.CommitChangesAsync();
 
-                Console.WriteLine("Id of new orc is " + newOcrModel.Id + " (if it is 0, creation is faild)");
-                return newOcrModel;
+                Console.WriteLine("Id of new orc is " + newOcrModel.Id + " (if it is 0, creation is failed)");
+                return ToDto(newOcrModel);
             }
         }
 
-        public async Task<List<OcrModel>> GetAllOrcModelsAsync()
+        public async Task<List<OcrModelDto>> GetAllOrcModelsAsync()
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
                 var query = await uow.Query<OcrModel>().ToListAsync();
-                return new List<OcrModel>(query);
+                return query.Select(ToDto).ToList();
             }
         }
 
-        public async Task<OcrModel> ChangeImageAsync(int modelId, Image image)
+        public async Task<OcrModelDto> ChangeImageAsync(int modelId, Image image)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
                 var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
+                if (model == null) return null;
+
                 model.Image = image;
                 await uow.SaveAsync(model);
                 await uow.CommitChangesAsync();
 
                 Console.WriteLine(" -> Image updated");
-
-                return model;
+                return ToDto(model);
             }
         }
 
-        public async Task<OcrModel> ChangeNameAsync(int modelId, string name)
+        public async Task<OcrModelDto> ChangeNameAsync(int modelId, string name)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
                 var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
+                if (model == null) return null;
+
                 model.Name = name;
                 await uow.SaveAsync(model);
                 await uow.CommitChangesAsync();
 
                 Console.WriteLine(" -> Name updated");
-
-                return model;
+                return ToDto(model);
             }
         }
 
-        public async Task<OcrModel> AddAreaAsync(int modelId, Area area)
+        public async Task<OcrModelDto> AddAreaAsync(int modelId, AreaDto areaDto)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
                 var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
-                model.Areas.Add(area);
+                if (model == null) return null;
+
+                model.Areas.Add(Area.Create(uow,areaDto));
                 await uow.SaveAsync(model);
                 await uow.CommitChangesAsync();
 
                 Console.WriteLine(" -> Area added");
-
-                return model;
+                return ToDto(model);
             }
         }
 
-        public async Task<OcrModel> DeleteAreaAsync(int modelId, int areaId)
+        public async Task<OcrModelDto> DeleteAreaAsync(int modelId, int areaId)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
                 var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
+                if (model == null) return null;
+
                 var areaToRemove = model.Areas.FirstOrDefault(a => a.Id == areaId);
-                if (areaToRemove is null) return model;
-                model.Areas.Remove(areaToRemove);
+                if (areaToRemove != null)
+                {
+                    model.Areas.Remove(areaToRemove);
+                    await uow.SaveAsync(model);
+                    await uow.CommitChangesAsync();
 
-                await uow.SaveAsync(model);
-                await uow.CommitChangesAsync();
-
-                Console.WriteLine(" -> Area deleted");
-
-                return model;
+                    Console.WriteLine(" -> Area deleted");
+                }
+                return ToDto(model);
             }
         }
     }

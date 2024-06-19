@@ -1,4 +1,5 @@
-﻿using Pikda.Domain.Entites;
+﻿using Pikda.Domain.DTOs;
+using Pikda.Domain.Entites;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,14 +14,12 @@ namespace Pikda.Domain.Interfaces
         /// </summary>
         /// <param name="ocrModel">Entity to be store</param>
         /// <returns>If success, the created entity Id (auto increment int) otherwise return NULL</returns>
-        Task<OcrModel> AddOrcModelAsync(string name);
-
-        Task<OcrModel> ChangeImageAsync(int modelId, Image image);
-
-        Task<OcrModel> ChangeNameAsync(int modelId, string name);
-        Task<OcrModel> AddAreaAsync(int modelId, Area area);
-        Task<OcrModel> DeleteAreaAsync(int modelId, int areaId);
-        Task<List<OcrModel>> GetAllOrcModelsAsync();
+        Task<OcrModelDto> AddOrcModelAsync(string name);
+        Task<OcrModelDto> ChangeImageAsync(int modelId, Image image);
+        Task<OcrModelDto> ChangeNameAsync(int modelId, string name);
+        Task<OcrModelDto> AddAreaAsync(int modelId, AreaDto area);
+        Task<OcrModelDto> DeleteAreaAsync(int modelId, int areaId);
+        Task<List<OcrModelDto>> GetAllOrcModelsAsync();
 
     }
 }
