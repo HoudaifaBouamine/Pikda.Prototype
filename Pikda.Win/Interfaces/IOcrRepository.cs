@@ -21,5 +21,7 @@ namespace Pikda.Domain.Interfaces
         Task<OcrModelDto> DeleteAreaAsync(int modelId, int areaId);
         Task<List<OcrModelDto>> GetAllOrcModelsAsync();
 
+        Task<List<AreaDto>> GetOcrModelAreas(int modelId);
+
     }
 }

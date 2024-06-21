@@ -134,5 +134,19 @@ namespace Pikda.Infrastructure
                 return ToDto(model);
             }
         }
+
+        public async Task<List<AreaDto>> GetOcrModelAreas(int modelId)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
+                if (model == null) return null;
+
+                var modelDto = ToDto(model);
+
+                return modelDto.Areas.ToList();
+            }
+
+        }
     }
 }

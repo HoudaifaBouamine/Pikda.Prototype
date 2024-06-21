@@ -85,6 +85,8 @@ namespace Pikda.Win
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
+            this.SuspendLayout();
+
             var totalWidth = this.Width;
 
             var partsWidth = (int)(totalWidth * 0.2);
@@ -96,6 +98,8 @@ namespace Pikda.Win
                 partsWidth = ModelMenuMaxWidth;
 
             this.ModelsList.Width = this.ModelData.Width = partsWidth;
+
+
 
             this.ResumeLayout(true);
         }
@@ -114,5 +118,6 @@ namespace Pikda.Win
                 this.ModelsList.Controls.Add(new ModelButton(this.ModelsList, pictureEditor, model.Id, model.Name));
             }
         }
+
     }
 }
