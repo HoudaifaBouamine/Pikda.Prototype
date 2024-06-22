@@ -4,7 +4,6 @@ using Microsoft.Extensions.Hosting;
 using Pikda.Domain.Interfaces;
 using Pikda.Infrastructure;
 using System;
-using System.IO;
 using System.Windows.Forms;
 
 namespace Pikda.Win

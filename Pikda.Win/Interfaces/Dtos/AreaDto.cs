@@ -1,7 +1,4 @@
-﻿using DevExpress.Xpo;
-using Pikda.Domain.Entites;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 
 namespace Pikda.Domain.DTOs

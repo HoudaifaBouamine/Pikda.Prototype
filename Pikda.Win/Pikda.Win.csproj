@@ -197,10 +197,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\Entities\Area.cs" />
-    <Compile Include="Domain\Dtos\AreaDto.cs" />
-    <Compile Include="Domain\Dtos\OcrModelDto.cs" />
-    <Compile Include="Domain\Entities\OcrModel.cs" />
+    <Compile Include="Entities\Area.cs" />
+    <Compile Include="Interfaces\Dtos\AreaDto.cs" />
+    <Compile Include="Interfaces\Dtos\OcrModelDto.cs" />
+    <Compile Include="Entities\OcrModel.cs" />
     <Compile Include="Forms\ModelCreationDialogForm.cs">
       <SubType>Form</SubType>
     </Compile>

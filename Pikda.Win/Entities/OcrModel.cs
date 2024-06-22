@@ -1,11 +1,5 @@
 ﻿using DevExpress.Xpo;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Design;
-using static DevExpress.Utils.HashCodeHelper.Primitives;
-using System.IO;
-using System.Collections.Generic;
-using static DevExpress.XtraEditors.RoundedSkinPanel;
 using DevExpress.Utils.Extensions;
 
 namespace Pikda.Domain.Entites

@@ -1,7 +1,5 @@
 ﻿using DevExpress.Xpo;
 using Pikda.Domain.DTOs;
-using System;
-using System.Drawing;
 
 namespace Pikda.Domain.Entites
 {
