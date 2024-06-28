@@ -17,32 +17,12 @@ namespace Pikda.Infrastructure
         public OcrRepository()
         {
             if (XpoDefault.DataLayer != null) return;
+
             string appDataPath = Path.Combine(Environment.CurrentDirectory, "..\\..");
             appDataPath = Path.GetFullPath(appDataPath);
             string connectionString = SQLiteConnectionProvider.GetConnectionString(Path.Combine(appDataPath, "OrcModels.db"));
             XpoDefault.DataLayer = XpoDefault.GetDataLayer(connectionString, AutoCreateOption.DatabaseAndSchema);
             Console.WriteLine($"\n\n --> Connection String {connectionString}\n\n");
-        }
-
-        private OcrModelDto ToDto(OcrModel model)
-        {
-            if (model == null) return null;
-
-            return new OcrModelDto
-            {
-                Id = model.Id,
-                Name = model.Name,
-                Image = model.Image,
-                Areas = model.Areas.Select(a => new AreaDto
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    XFactor = a.XFactor,
-                    YFactor = a.YFactor,
-                    WidthFactor = a.WidthFactor,
-                    HeightFactor = a.HeightFactor
-                }).ToList()
-            };
         }
 
         public async Task<OcrModelDto> AddOrcModelAsync(string name)
@@ -54,7 +34,7 @@ namespace Pikda.Infrastructure
                 await uow.CommitChangesAsync();
 
                 Console.WriteLine("Id of new orc is " + newOcrModel.Id + " (if it is 0, creation is failed)");
-                return ToDto(newOcrModel);
+                return OcrModelDto.ToDto(newOcrModel);
             }
         }
 
@@ -63,7 +43,7 @@ namespace Pikda.Infrastructure
             using (UnitOfWork uow = new UnitOfWork())
             {
                 var query = await uow.Query<OcrModel>().ToListAsync();
-                return query.Select(ToDto).ToList();
+                return query.Select(OcrModelDto.ToDto).ToList();
             }
         }
 
@@ -79,7 +59,7 @@ namespace Pikda.Infrastructure
                 await uow.CommitChangesAsync();
 
                 Console.WriteLine(" -> Image updated");
-                return ToDto(model);
+                return OcrModelDto.ToDto(model);
             }
         }
 
@@ -95,7 +75,7 @@ namespace Pikda.Infrastructure
                 await uow.CommitChangesAsync();
 
                 Console.WriteLine(" -> Name updated");
-                return ToDto(model);
+                return OcrModelDto.ToDto(model);
             }
         }
 
@@ -111,7 +91,7 @@ namespace Pikda.Infrastructure
                 await uow.CommitChangesAsync();
 
                 Console.WriteLine(" -> Area added");
-                return ToDto(model);
+                return OcrModelDto.ToDto(model);
             }
         }
 
@@ -131,7 +111,7 @@ namespace Pikda.Infrastructure
 
                     Console.WriteLine(" -> Area deleted");
                 }
-                return ToDto(model);
+                return OcrModelDto.ToDto(model);
             }
         }
 
@@ -142,7 +122,7 @@ namespace Pikda.Infrastructure
                 var model = await uow.GetObjectByKeyAsync<OcrModel>(modelId);
                 if (model == null) return null;
 
-                var modelDto = ToDto(model);
+                var modelDto = OcrModelDto.ToDto(model);
 
                 return modelDto.Areas.ToList();
             }

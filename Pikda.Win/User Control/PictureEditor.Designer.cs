@@ -34,6 +34,7 @@
             // 
             // PictureEdit
             // 
+            this.PictureEdit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.PictureEdit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PictureEdit.Location = new System.Drawing.Point(0, 0);
             this.PictureEdit.Name = "PictureEdit";
@@ -41,10 +42,9 @@
             this.PictureEdit.Properties.Appearance.Options.UseFont = true;
             this.PictureEdit.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
             this.PictureEdit.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Zoom;
-            this.PictureEdit.Size = new System.Drawing.Size(662, 359);
+            this.PictureEdit.Size = new System.Drawing.Size(700, 700);
             this.PictureEdit.TabIndex = 0;
             this.PictureEdit.ImageChanged += new System.EventHandler(this.PictureEdit_ImageChanged);
-            this.PictureEdit.ImageLoading += new DevExpress.XtraEditors.Repository.ImageLoadEventHandler(this.PictureEdit_ImageLoading);
             this.PictureEdit.Paint += new System.Windows.Forms.PaintEventHandler(this.PictureEdit_Paint);
             this.PictureEdit.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureEdit_MouseDown);
             this.PictureEdit.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureEdit_MouseMove);
@@ -57,7 +57,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.PictureEdit);
             this.Name = "PictureEditor";
-            this.Size = new System.Drawing.Size(662, 359);
+            this.Size = new System.Drawing.Size(700, 700);
             ((System.ComponentModel.ISupportInitialize)(this.PictureEdit.Properties)).EndInit();
             this.ResumeLayout(false);
 

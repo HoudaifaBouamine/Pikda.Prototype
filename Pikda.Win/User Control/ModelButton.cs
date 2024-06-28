@@ -24,41 +24,21 @@ namespace Pikda.Win.User_Control
             this.UnSelectAllAndSelectThis();
         }
 
-        private void UnSelectAllAndSelectThis()
-        {
-            foreach (ModelButton modelButton in this.ModelsList.Controls)
-                modelButton.MarkAsUnSelected();
+        #region Public Interface
 
-            this.MarkAsSelected();
-        }
-        public void MarkAsSelected()
-        {
-            this.BackColor = SelectedColor;
-            this.IsSelected = true;
-            PictureEditor.MarkAsSelected();
-        }
-
-        public void MarkAsUnSelected()
-        {
-            this.BackColor = UnSelectedColor;
-            this.IsSelected = false;
-            PictureEditor.MarkAsUnSelected();
-        }
-
-        private static Color SelectedColor = Color.Green;
-        private static Color UnSelectedColor = Color.Gray;
-        private PanelControl ModelsList { get; set; }
-        private PictureEditor PictureEditor { get; set; }
-
+        /// <summary>
+        /// OCR Model Id
+        /// </summary>
         public int Id { get; private set; }
-
-
         /// <summary>
         /// Use MarkAsSelected() or MarkAsUnSelected() to update this value
         /// </summary>
         public bool IsSelected { get; private set; }
-        public string ModelName 
-        { 
+        /// <summary>
+        /// OCR Model Name
+        /// </summary>
+        public string ModelName
+        {
             get
             {
                 return this.Button.Text;
@@ -67,12 +47,45 @@ namespace Pikda.Win.User_Control
             {
                 this.Button.Text = value;
             }
-
+        }
+        public void MarkAsSelected()
+        {
+            this.BackColor = SelectedColor;
+            this.IsSelected = true;
+            PictureEditor.MarkAsSelected();
+        }
+        public void MarkAsUnSelected()
+        {
+            this.BackColor = UnSelectedColor;
+            this.IsSelected = false;
+            PictureEditor.MarkAsUnSelected();
         }
 
+        #endregion
+
+        #region Private Behaviors
+        private void UnSelectAllAndSelectThis()
+        {
+            foreach (ModelButton modelButton in this.ModelsList.Controls)
+                modelButton.MarkAsUnSelected();
+
+            this.MarkAsSelected();
+        }
         private void Button_Click(object sender, EventArgs e)
         {
             this.UnSelectAllAndSelectThis();
         }
+
+        #endregion
+
+        #region Private State
+
+        private static Color SelectedColor = Color.Green;
+        private static Color UnSelectedColor = Color.Gray;
+        private PanelControl ModelsList { get; set; }
+        private PictureEditor PictureEditor { get; set; }
+
+        #endregion
+
     }
 }

@@ -23,43 +23,62 @@ namespace Pikda.Win.User_Control
     {
         public PictureEditor(IOcrRepository ocrRepository, Panel picturePanel, OcrModelDto model)
         {
-            this.Dock = DockStyle.Fill;
+            _picturePanel = picturePanel;
+            _ocrModel = model;
+            _ocrRepository = ocrRepository;
+
             InitializeComponent();
-            this.Id = model.Id;
-            this.PicturePanel = picturePanel;
-            this.MarkAsSelected();
+            MarkAsSelected();
+            SetInitialPictureAndRects();
+        }
 
-            if (model.Image != null)
+        #region Public Interface
+
+        /// <summary>
+        /// Id if the assosiated OCR Model
+        /// </summary>
+        public int Id => _ocrModel.Id;
+        /// <summary>
+        /// Use MarkAsSelected() or MarkAsUnSelected() to update this value
+        /// </summary>
+        public bool IsSelected { get; private set; }
+        /// <summary>
+        /// Current card image
+        /// </summary>
+        public Image Image
+        {
+            get
             {
-                Image = model.Image;
+                return PictureEdit.Image;
+            }
+            private set
+            {
+                PictureEdit.Image = value;
+            }
+        }
+
+        #endregion
+
+        #region Private Behaviors
+        private void SetInitialPictureAndRects()
+        {
+            if (_ocrModel.Image != null)
+            {
+                Image = _ocrModel.Image;
                 ImageBorder = CalcImageBorder();
-    
-                Console.WriteLine(" --> Count of areas : " + model.Areas.Count);
 
-                foreach (var area in model.Areas)
+                Console.WriteLine(" --> Count of areas : " + _ocrModel.Areas.Count);
+
+                foreach (var area in _ocrModel.Areas)
                 {
-                    Rectangles.Add(GetRectFromAreaDto(ImageBorder,area));
-                }
-
-                Console.WriteLine(" --> Count of reactangles : " + Rectangles.Count);
-
-                foreach (var rect in Rectangles)
-                {
-                    Console.WriteLine($"Rect {rect.Item2} : X:{rect.Item1.X}, Y:{rect.Item1.Y}, W:{rect.Item1.Width}, H:{rect.Item1.Height}");
+                    Rectangles.Add(GetRectFromAreaDto(ImageBorder, area));
                 }
             }
-            //Rectangles = model.Areas
-            //    .Select(a => (a.ToRectangle(ImageBorder), a.Name))
-            //    .ToList();
-
-
-            this._ocrRepository = ocrRepository;
-            _ocrModel = model;
         }
 
         private void UnSelectAllAndSelectThis()
         {
-            foreach (PictureEditor modelButton in this.PicturePanel.Controls)
+            foreach (PictureEditor modelButton in this._picturePanel.Controls)
                 modelButton.MarkAsUnSelected();
 
             this.MarkAsSelected();
@@ -77,9 +96,6 @@ namespace Pikda.Win.User_Control
             this.IsSelected = false;
         }
 
-
-        
-
         private void PictureEdit_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left || PictureEdit.Image is null)
@@ -88,7 +104,6 @@ namespace Pikda.Win.User_Control
             if (!ImageBorder.Contains(e.Location))
                 return;
 
-            Console.WriteLine("mouse down picture edit");
             StartPoint = e.Location;
             CurrentRect = new Rectangle(e.Location, new Size(0, 0));
         }
@@ -102,18 +117,15 @@ namespace Pikda.Win.User_Control
 
             EndPoint = e.Location;
 
-            // Update the current rectangle
             CurrentRect = new Rectangle
                 (
-                    Math.Min(StartPoint.X , EndPoint.X),
-                    Math.Min(StartPoint.Y , EndPoint.Y),
+                    Math.Min(StartPoint.X, EndPoint.X),
+                    Math.Min(StartPoint.Y, EndPoint.Y),
                     Math.Abs(StartPoint.X - EndPoint.X),
                     Math.Abs(StartPoint.Y - EndPoint.Y)
                 );
-            CurrentRect.Intersect( ImageBorder );
+            CurrentRect.Intersect(ImageBorder);
 
-            // Invalidate the form to trigger the paint event
-            Console.WriteLine("mouse move , picture edit");
             PictureEdit.Invalidate();
         }
 
@@ -131,17 +143,15 @@ namespace Pikda.Win.User_Control
             // Add the current rectangle to the list
             CurrentRect.Intersect(ImageBorder);
             Rectangles.Add((CurrentRect, UnDefinedName));
-            
-            Console.WriteLine(" --> ocr mode deposed ? : " + _ocrModel.Id+ " " + _ocrModel.Name);
 
-            _ocrModel = await _ocrRepository.AddAreaAsync(Id, GetAreaDtoFromRect(ImageBorder,UnDefinedName,CurrentRect));
-            Console.WriteLine($"after adding area : {_ocrModel}");
+            _ocrModel = await _ocrRepository.AddAreaAsync(Id, GetAreaDtoFromRect(ImageBorder, UnDefinedName, CurrentRect));
+
             StartPoint = UnDefinedPoint;
 
             CurrentRect = UnDefinedRect;
         }
 
-        private AreaDto GetAreaDtoFromRect(Rectangle border ,string name, Rectangle rect)
+        private AreaDto GetAreaDtoFromRect(Rectangle border, string name, Rectangle rect)
         {
             rect = new Rectangle
                 (
@@ -153,7 +163,7 @@ namespace Pikda.Win.User_Control
             return AreaDto.Create(name, border, rect);
         }
 
-        private (Rectangle,string) GetRectFromAreaDto(Rectangle border,AreaDto area)
+        private (Rectangle, string) GetRectFromAreaDto(Rectangle border, AreaDto area)
         {
             var rect = area.ToRectangle(border);
 
@@ -176,15 +186,14 @@ namespace Pikda.Win.User_Control
             Rectangles = areas.Select(a => GetRectFromAreaDto(ImageBorder, a)).ToList();
 
         }
+
         private void PictureEdit_Paint(object sender, PaintEventArgs e)
         {
             if (PictureEdit.Image is null) return;
-            //Rectangles = Rectangles.Select(r => ReCalculateRectangle(r.Item2, r.Item1)).ToList();
 
             ImageBorder = CalcImageBorder();
             ReCalcRectangles();
 
-            // Create a Graphics object and a Pen object
             Graphics g = e.Graphics;
             Pen pen = new Pen(Color.Black);
 
@@ -195,20 +204,8 @@ namespace Pikda.Win.User_Control
             }
 
             // Draw the current rectangle
-            if(CurrentRect != UnDefinedRect)
+            if (CurrentRect != UnDefinedRect)
                 g.DrawRectangle(pen, CurrentRect);
-
-            Console.WriteLine("Picture Edit : " + PictureEdit.Size);
-            Console.WriteLine("Image        : " + PictureEdit.Image.Size);
-
-
-            Console.WriteLine($"Image Border: {ImageBorder}");
-            Console.WriteLine($"Current Rectangle: {CurrentRect}");
-
-            pen.Color = Color.Red;
-
-            //g.DrawRectangle(pen, ImageBorder);
-
 
             // Dispose the objects
             pen.Dispose();
@@ -216,7 +213,7 @@ namespace Pikda.Win.User_Control
 
         }
 
-        Rectangle CalcImageBorder()
+        private Rectangle CalcImageBorder()
         {
 
             var wFactor = (double)PictureEdit.Width / PictureEdit.Image.Width;
@@ -232,28 +229,27 @@ namespace Pikda.Win.User_Control
                     height: (int)(PictureEdit.Image.Height * minFactor)
                 );
         }
-  
 
-        private readonly IOcrRepository _ocrRepository;
-        private OcrModelDto _ocrModel;
-        public int Id { get; private set; }
-
-        /// <summary>
-        /// Use MarkAsSelected() or MarkAsUnSelected() to update this value
-        /// </summary>
-        public bool IsSelected { get; private set; }
-        private Panel PicturePanel { get; set; }
-        public Image Image
+        private async void PictureEdit_ImageChanged(object sender, EventArgs e)
         {
-            get
-            {
-                return PictureEdit.Image;
-            }
-            private set
-            {
-                PictureEdit.Image = value;
-            }
+            Console.WriteLine($"\n\n\n\n -----------> Image = {Image}");
+            if (_ocrRepository is null) return;
+            await _ocrRepository.ChangeImageAsync(Id, Image);
+
         }
+
+        private void PictureEdit_Resize(object sender, EventArgs e)
+        {
+            this.SuspendLayout();
+        }
+
+        #endregion
+
+        #region Private State
+
+        private readonly Panel _picturePanel;
+        private readonly IOcrRepository _ocrRepository;
+        private OcrModelDto _ocrModel; // will be updated throw the database when change happen
 
         private List<(Rectangle, string)> Rectangles = new List<(Rectangle, string)>();
         private Rectangle CurrentRect;
@@ -285,30 +281,6 @@ namespace Pikda.Win.User_Control
         private Point StartPoint = UnDefinedPoint;
         private Point EndPoint;
 
-
-        private void PictureEdit_ImageLoading(object sender, DevExpress.XtraEditors.Repository.SaveLoadImageEventArgs e)
-        {
-            Console.WriteLine("\n\n---> Image from event : " + e.Image);
-            Console.WriteLine("\n\n---> Image from editor : " + Image);
-        }
-
-        private async void PictureEdit_ImageChanged(object sender, EventArgs e)
-        {
-            Console.WriteLine($"\n\n\n\n -----------> Image = {Image}");
-            if (_ocrRepository is null) return;
-            await _ocrRepository.ChangeImageAsync(Id, Image);
-
-        }
-
-        private (Rectangle,string) ReCalculateRectangle(string name,Rectangle rect)
-        {
-            var areaDto = GetAreaDtoFromRect(PrevImageBorder, name, rect); 
-            return GetRectFromAreaDto(ImageBorder, areaDto);
-        }
-
-        private void PictureEdit_Resize(object sender, EventArgs e)
-        {
-            this.SuspendLayout();
-        }
+        #endregion
     }
 }

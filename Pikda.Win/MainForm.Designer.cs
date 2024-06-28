@@ -57,6 +57,7 @@
             this.ModelsList.Size = new System.Drawing.Size(323, 676);
             this.ModelsList.TabIndex = 4;
             this.ModelsList.Click += new System.EventHandler(this.ModelsList_Click);
+            this.ModelsList.Paint += new System.Windows.Forms.PaintEventHandler(this.ModelsList_Paint);
             // 
             // ImagesPanel
             // 
