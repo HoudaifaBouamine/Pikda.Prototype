@@ -60,6 +60,7 @@
             // 
             // ImagesPanel
             // 
+            this.ImagesPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
             this.ImagesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ImagesPanel.Location = new System.Drawing.Point(323, 0);
             this.ImagesPanel.Name = "ImagesPanel";

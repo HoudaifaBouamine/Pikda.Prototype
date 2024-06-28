@@ -54,6 +54,7 @@ namespace Pikda.Win
 
                 var pictureEditor = new PictureEditor(_ocrRepository,this.ImagesPanel, newOcrModel);
                 this.ImagesPanel.Controls.Add(pictureEditor);
+
                 this.ModelsList.Controls.Add(new ModelButton(this.ModelsList, pictureEditor, newOcrModel.Id, modelName));
 
                 foreach(ModelButton modelButton in this.ModelsList.Controls)

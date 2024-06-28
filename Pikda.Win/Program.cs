@@ -21,7 +21,7 @@ namespace Pikda.Win
             ServiceProvider = host.Services;
 
             Application.Run(ServiceProvider.GetRequiredService<MainForm>());
-           
+            
         }
         public static IServiceProvider ServiceProvider { get; private set; }
         static IHostBuilder CreateHostBuilder()
