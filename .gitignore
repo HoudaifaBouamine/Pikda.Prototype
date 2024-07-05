@@ -386,3 +386,6 @@ InteropTests/NativeTests/out
 **/ScratchProject/
 **/ScratchProjectWithInternals/
 /api
+/Pikda.Win/images
+/ImageToTextApi/images
+/ImageToTextApi/proImages
