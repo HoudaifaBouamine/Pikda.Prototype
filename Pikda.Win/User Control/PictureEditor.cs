@@ -5,6 +5,7 @@ using Pikda.Domain.DTOs;
 using Pikda.Domain.Entites;
 using Pikda.Domain.Interfaces;
 using Pikda.Infrastructure;
+using Pikda.Service;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,6 +31,7 @@ namespace Pikda.Win.User_Control
             InitializeComponent();
             MarkAsSelected();
             SetInitialPictureAndRects();
+
         }
 
         #region Public Interface
@@ -282,5 +284,11 @@ namespace Pikda.Win.User_Control
         private Point EndPoint;
 
         #endregion
+
+        private void PictureEdit_Click(object sender, EventArgs e)
+        {
+            if (Image != null)
+                new OcrService().Process(Image, "ara");
+        }
     }
 }
