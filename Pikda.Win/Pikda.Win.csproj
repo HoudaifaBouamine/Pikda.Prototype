@@ -315,9 +315,6 @@
   <ItemGroup>
     <Folder Include="images\" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Tests.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

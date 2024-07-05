@@ -287,8 +287,20 @@ namespace Pikda.Win.User_Control
 
         private void PictureEdit_Click(object sender, EventArgs e)
         {
-            if (Image != null)
+            if (Image == null) return;
+
+            if (_ocrModel.Areas.Count <= 0)
                 new OcrService().Process(Image, "ara");
+            else
+            {
+                var imageRect = new Rectangle(0,0,Image.Width,Image.Height);
+                Console.WriteLine($" Area : x:{_ocrModel.Areas[0].XFactor}, y:{_ocrModel.Areas[0].YFactor}, w:{_ocrModel.Areas[0].WidthFactor}, h:{_ocrModel.Areas[0].HeightFactor}");
+                var rect = _ocrModel.Areas[0].ToRectangle(imageRect);
+                new OcrService().ProcessRect(Image, "ara", rect);
+
+            }
+
+
         }
     }
 }
