@@ -17,12 +17,29 @@ app.MapPost("image-to-text", async (IFormFile image, [FromServices] OcrService o
 {
     try
     {
-        return await ocrService.Process(image, "ara");
+        var text = await ocrService.Process(image, "ara");
+        File.AppendAllText("Test.md",text + "\n\n\n---------------------------------------\n");
+        return text;
     }
     catch (Exception ex)
     {
         return "Error" + ex.Message;
     }
 }).DisableAntiforgery();
+
+app.MapPost("imagePath-to-text", async (string path, [FromServices] OcrService ocrService) =>
+{
+    try
+    {
+        var text = ocrService.Process(path, "ara");
+        File.AppendAllText("Test.md", text + "\n\n\n---------------------------------------\n");
+        return text;
+    }
+    catch (Exception ex)
+    {
+        return "Error" + ex.Message;
+    }
+}).DisableAntiforgery();
+
 
 app.Run();

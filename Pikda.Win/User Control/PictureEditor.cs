@@ -5,13 +5,13 @@ using Pikda.Domain.DTOs;
 using Pikda.Domain.Entites;
 using Pikda.Domain.Interfaces;
 using Pikda.Infrastructure;
-using Pikda.Service;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -288,18 +288,18 @@ namespace Pikda.Win.User_Control
         private void PictureEdit_Click(object sender, EventArgs e)
         {
             if (Image == null) return;
-
+            string text = "";
             if (_ocrModel.Areas.Count <= 0)
-                new OcrService().Process(Image, "ara");
+                text = new OcrService().Process(Image,Guid.NewGuid().ToString() + ".jpg", "ara");
             else
             {
                 var imageRect = new Rectangle(0,0,Image.Width,Image.Height);
                 Console.WriteLine($" Area : x:{_ocrModel.Areas[0].XFactor}, y:{_ocrModel.Areas[0].YFactor}, w:{_ocrModel.Areas[0].WidthFactor}, h:{_ocrModel.Areas[0].HeightFactor}");
                 var rect = _ocrModel.Areas[0].ToRectangle(imageRect);
-                new OcrService().ProcessRect(Image, "ara", rect);
-
+                text = new OcrService().Process(Image, Guid.NewGuid().ToString() + ".jpg", rect,"ara");
             }
 
+            File.WriteAllText("../../Test.md",text);
 
         }
     }

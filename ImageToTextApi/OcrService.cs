@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using Tesseract;
 
 internal class OcrService
@@ -20,12 +19,12 @@ internal class OcrService
 
         Console.WriteLine($"--> Image Saved at : {imagePath}");
 
-        var result = _process(imagePath, lang);
+        var result = Process(imagePath, lang);
 
         return string.IsNullOrWhiteSpace(result) ? "Ocr is finished. Return empty" : result;
     }
 
-    public string _process(string imagePath,string lang)
+    public string Process(string imagePath,string lang)
     {
         string tessPath = Path.Combine(trainedDataFolderName, "");
         string result = "";
@@ -62,7 +61,7 @@ internal class OcrService
 
         Console.WriteLine($"--> Image Saved at : {imagePath}");
 
-        var result = _process(imagePath, lang);
+        var result = Process(imagePath, lang);
 
         return string.IsNullOrWhiteSpace(result) ? "Ocr is finished. Return empty" : result;
     }
